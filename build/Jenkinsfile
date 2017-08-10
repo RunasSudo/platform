@@ -1,0 +1,61 @@
+#!/usr/bin/env groovy
+
+pipeline {
+
+    options {
+        skipDefaultCheckout true
+    }
+
+    environment {
+        GOPATH = '$WORKSPACE'
+    }
+
+    agent {
+        kubernetes {
+            label 'jenkins-slave'
+            containerTemplate {
+                name 'mattermost-mysql'
+                image 'mysql:5.7'
+                containerPort 3306
+                hostPost 3306
+            }
+            containerTemplate {
+                name 'golang'
+                image 'golang:1.8'
+                ttyEnabled true
+                command 'cat'
+            }
+        }
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                dir('go/src/github.com/mattermost/platform') {
+                    git branch: env.BRANCH_NAME, credentialsId: '5f3e0d1c-1c0e-4e88-8e53-80743eac981b', url: 'https://github.com/mattermost/platform.git'
+                }
+
+                //def eebranch = 'master'
+                //def eebranch = resolveScm source: [$class: 'GitSCMSource', credentialsId: '5f3e0d1c-1c0e-4e88-8e53-80743eac981b', id: '_', remote: 'https://github.com/mattermost/enterprise.git'], targets: ["${env.BRANCH_NAME}", 'master']
+                //git branch: eebranch, credentialsId: '5f3e0d1c-1c0e-4e88-8e53-80743eac981b', url: 'https://github.com/mattermost/enterprise.git'
+                //sh 'mv `pwd` /go/src/github.com/mattermost/enterprise'
+
+                container('golang') {
+                    dir('go/src/github.com/mattermost/platform') {
+                        sh 'pwd'
+                        sh 'make build-linux'
+                    }
+                }
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                container('golang') {
+                    //sh 'cd /go/src/github.com/mattermost/platform && sed -i \'s/dockerhost/localhost/g\' config/config.json'
+                    //sh 'cd /go/src/github.com/mattermost/platform && make test'
+                }
+            }
+        }
+    }
+}
