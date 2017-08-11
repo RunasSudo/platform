@@ -445,6 +445,7 @@ func getClientConfig(c *model.Config) map[string]string {
 	props["EmailNotificationContentsType"] = *c.EmailSettings.EmailNotificationContentsType
 
 	props["EnableSignUpWithGitLab"] = strconv.FormatBool(c.GitLabSettings.Enable)
+	props["EnableSignUpWithGoogle"] = strconv.FormatBool(c.GoogleSettings.Enable)
 
 	props["ShowEmailAddress"] = strconv.FormatBool(c.PrivacySettings.ShowEmailAddress)
 
@@ -527,10 +528,6 @@ func getClientConfig(c *model.Config) map[string]string {
 
 		if *License.Features.Cluster {
 			props["EnableMetrics"] = strconv.FormatBool(*c.MetricsSettings.Enable)
-		}
-
-		if *License.Features.GoogleOAuth {
-			props["EnableSignUpWithGoogle"] = strconv.FormatBool(c.GoogleSettings.Enable)
 		}
 
 		if *License.Features.Office365OAuth {

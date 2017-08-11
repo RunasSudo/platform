@@ -186,11 +186,11 @@ export default class AdminSidebar extends React.Component {
         } else {
             oauthSettings = (
                 <AdminSidebarSection
-                    name='gitlab'
+                    name='oauth'
                     title={
                         <FormattedMessage
-                            id='admin.sidebar.gitlab'
-                            defaultMessage='GitLab'
+                            id='admin.sidebar.oauth'
+                            defaultMessage='OAuth 2.0'
                         />
                     }
                 />
